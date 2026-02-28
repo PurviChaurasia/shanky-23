@@ -25,7 +25,7 @@ const content = {
             {
                 name: "Nawal",
                 caption: "The one who never let you feel alone",
-                src: "https://drive.google.com/file/d/1daQyFfRsWJHLEKWQ-OAB09zkqyCfcIrg/view?usp=drive_link"
+                src: "https://drive.google.com/file/d/1RP1r9vtpqHPPs7BY77r_V3N0ri_wiFif/view?usp=drive_link"
             },
             {
                 name: "Rana",
@@ -56,7 +56,7 @@ const content = {
             {
                 name: "Faizan",
                 caption: "Your driver friend for every trip!",
-                src: "https://drive.google.com/file/d/1xnWjmvnRBuFPsq6XwNq5_2YbijPXzrWu/view?usp=drive_link"
+                src: "https://drive.google.com/file/d/1Im9-n40LW_2fayGrQTh0Ra1f-I14bGFF/view?usp=sharing"
             },
             {
                 name: "Yash",
