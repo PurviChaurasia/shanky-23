@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLASS OF 2026 — SHARANYA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="yearbook-container">
+    <!-- Cover Screen -->
+    <div id="cover-screen" class="screen active">
+        <!-- Clouds layer -->
+        <div class="clouds-layer"></div>
+        <!-- Floating particles -->
+        <div class="particles-container"></div>
+        <!-- Yearbook decorative elements -->
+        <div class="photo-corner photo-corner-tl"></div>
+        <div class="photo-corner photo-corner-tr"></div>
+        <div class="photo-corner photo-corner-bl"></div>
+        <div class="photo-corner photo-corner-br"></div>
+        <div class="yearbook-badge">2026</div>
+        <div class="yearbook-stars">
+            <span class="star">★</span>
+            <span class="star">★</span>
+            <span class="star">★</span>
+        </div>
+        <!-- Car animation elements -->
+        <div class="road-line"></div>
+        <div class="car-sprite"></div>
+        <div class="car-banner">
+            <div class="car-banner-text">Happy 23rd</div>
+        </div>
+        <div class="cover-content">
+            <div class="yearbook-ribbon">
+                <h1 class="cover-title">CLASS OF <span id="grad-year">[YEAR]</span></h1>
+            </div>
+            <p class="cover-subtitle">PLAYER: <span id="player-name">[HIS FULL NAME]</span></p>
+            <div class="yearbook-signature">An ode to the person you became in 5 years by the person who saw you through it all <3 </div>
+            <button id="start-btn" class="retro-btn">[ PRESS START ]</button>
+            <button id="music-toggle" class="music-toggle" title="Toggle Background Music">🔊</button>
+        </div>
+    </div>
+
+    <!-- Year Selection Screen -->
+    <div id="year-selection" class="screen">
+        <div class="container">
+            <h2 class="page-title">SELECT CATEGORY</h2>
+            <div class="year-grid">
+                <div class="year-card" data-year="year1">
+                    <div class="pixel-icon pixel-star"></div>
+                    <h3>The Girls</h3>
+                    <p class="year-card-subtitle">Your day ones</p>
+                </div>
+                <div class="year-card" data-year="year2">
+                    <div class="pixel-icon pixel-lightning"></div>
+                    <h3>The Boys</h3>
+                    <p class="year-card-subtitle">Your ride or dies</p>
+                </div>
+                <div class="year-card" data-year="year3">
+                    <div class="pixel-icon pixel-crown"></div>
+                    <h3>The OGs</h3>
+                    <p class="year-card-subtitle">The originals</p>
+                </div>
+            </div>
+            <button id="constant-btn" class="constant-btn">
+                <div class="pixel-heart"></div>
+                <span>THE CONSTANT</span>
+            </button>
+            <button id="back-to-cover" class="back-btn">← BACK</button>
+        </div>
+    </div>
+
+    <!-- Year Pages (dynamically rendered) -->
+    <div id="year-page" class="screen">
+        <div class="container">
+            <button id="back-to-selection" class="back-btn">← BACK</button>
+            <div id="year-content"></div>
+        </div>
+    </div>
+
+    <!-- The Constant Page -->
+    <div id="constant-page" class="screen">
+        <div class="container constant-container">
+            <button id="back-to-selection-constant" class="back-btn">← BACK</button>
+            <div id="constant-content"></div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="memory-unlocked" class="memory-unlocked">Memory Unlocked</div>
+            <div id="modal-video-container"></div>
+            <div id="modal-info">
+                <h3 id="modal-friend-name"></h3>
+                <p id="modal-caption"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Achievement Message -->
+    <div id="achievement" class="achievement hidden">
+        <div class="achievement-content">
+            <h2>🎉 Achievement Unlocked</h2>
+            <p>Built By Many</p>
+        </div>
+    </div>
+
+    <!-- Background Audio -->
+    <audio id="bg-music" loop>
+        <source src="assets/audio/bg-music.mp3" type="audio/mpeg">
+        <source src="assets/audio/bg-music.ogg" type="audio/ogg">
+    </audio>
+    <audio id="click-sound">
+        <source src="assets/audio/click.mp3" type="audio/mpeg">
+        <source src="assets/audio/click.ogg" type="audio/ogg">
+    </audio>
+
+    </div> <!-- End yearbook-container -->
+    <script src="script.js"></script>
+</body>
+</html>
+

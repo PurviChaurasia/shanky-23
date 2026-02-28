@@ -1,0 +1,1731 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-color: #f5f1e8;
+    --paper-beige: #faf8f3;
+    --dusty-blue: #6b8fa3;
+    --faded-red: #c97d7d;
+    --olive-green: #8b956d;
+    --text-dark: #2c2c2c;
+    --text-light: #5a5a5a;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-strong: rgba(0, 0, 0, 0.2);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Grain overlay for paper texture */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Yearbook Container - 3D Book Setup */
+.yearbook-container {
+    perspective: 2000px;
+    perspective-origin: center center;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #e8e3d8 0%, #d4cdb8 100%);
+    transform-style: preserve-3d;
+}
+
+/* Screen Management - 3D Book Pages */
+.screen {
+    display: block;
+    min-height: 100vh;
+    padding: 2rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--paper-beige);
+    transform-style: preserve-3d;
+    transform-origin: right center;
+    backface-visibility: hidden;
+    box-shadow: 
+        -10px 0 30px rgba(0, 0, 0, 0.15),
+        10px 0 30px rgba(0, 0, 0, 0.15),
+        inset -2px 0 10px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* Default: All pages positioned behind (at -180deg) */
+.screen {
+    transform: rotateY(-180deg) translateZ(-1px);
+    z-index: 1;
+}
+
+/* Active page: visible and in front (at 0deg) */
+.screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 10;
+    transform: rotateY(0deg) translateZ(0px);
+}
+
+/* Page flipping out (rotating from 0deg to -180deg) */
+.screen.flipping-out {
+    transform: rotateY(-180deg) translateZ(-1px);
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Next page coming in (starts at -180deg, rotates to 0deg) */
+.screen.flipping-in {
+    opacity: 1;
+    transform: rotateY(0deg) translateZ(0px);
+    z-index: 8;
+    pointer-events: none;
+}
+
+/* Cover screen appears without flip on initial load */
+#cover-screen.active.no-flip {
+    transition: none;
+}
+
+/* Book Spine Effect */
+.screen::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to right, 
+        rgba(0, 0, 0, 0.12) 0%,
+        rgba(0, 0, 0, 0.06) 50%,
+        transparent 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.screen::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to left, 
+        rgba(0, 0, 0, 0.12) 0%,
+        rgba(0, 0, 0, 0.06) 50%,
+        transparent 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Page Corner Fold Effect */
+.screen.active::before {
+    box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.screen.active::after {
+    box-shadow: inset 2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Cover Screen */
+#cover-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    /* Maroon background color */
+    background-color: #800020;
+    /* Layered backgrounds: vertical gradient + radial vignette */
+    background-image: 
+        /* Subtle vertical gradient - slightly lighter top, darker bottom */
+        linear-gradient(to bottom, 
+            rgba(139, 0, 34, 0.3) 0%,
+            transparent 33%,
+            transparent 66%,
+            rgba(102, 0, 20, 0.2) 100%),
+        /* Radial vignette - lighter center, darker edges */
+        radial-gradient(ellipse at center, 
+            rgba(139, 0, 34, 0.2) 0%,
+            transparent 50%,
+            rgba(0, 0, 0, 0.15) 100%);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeInBackground 0.6s ease-out forwards;
+    /* Edge darkening */
+    box-shadow: 
+        inset 0 0 150px rgba(0, 0, 0, 0.1),
+        inset 0 0 80px rgba(0, 0, 0, 0.08);
+    /* Yearbook border frame */
+    border: 8px double rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+/* Paper grain texture overlay */
+#cover-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* More visible grain texture */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: overlay;
+}
+
+/* Additional grainy texture layer for yearbook feel */
+#cover-screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* More pronounced grain for yearbook paper feel */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grainFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grainFilter)' opacity='0.06'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 3;
+    mix-blend-mode: overlay;
+    opacity: 0.6;
+}
+
+/* Clouds layer - separate element for visibility */
+.clouds-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 1 !important;
+    background-image: 
+        /* Soft clouds - white/light gray for contrast against maroon */
+        radial-gradient(ellipse 1200px 500px at 15% 20%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 15%, rgba(255, 255, 255, 0.4) 35%, rgba(255, 255, 255, 0.15) 60%, transparent 80%),
+        radial-gradient(ellipse 1100px 450px at 85% 30%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.65) 15%, rgba(255, 255, 255, 0.35) 35%, rgba(255, 255, 255, 0.12) 60%, transparent 80%),
+        radial-gradient(ellipse 1150px 480px at 50% 75%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 15%, rgba(255, 255, 255, 0.3) 35%, rgba(255, 255, 255, 0.1) 60%, transparent 80%),
+        radial-gradient(ellipse 1000px 400px at 35% 10%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.55) 30%, rgba(255, 255, 255, 0.25) 55%, transparent 75%),
+        radial-gradient(ellipse 1050px 420px at 70% 60%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 30%, rgba(255, 255, 255, 0.2) 55%, transparent 75%),
+        radial-gradient(ellipse 900px 380px at 10% 50%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.45) 35%, rgba(255, 255, 255, 0.15) 60%, transparent 80%),
+        radial-gradient(ellipse 950px 390px at 90% 70%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.4) 35%, rgba(255, 255, 255, 0.12) 60%, transparent 80%),
+        radial-gradient(ellipse 800px 350px at 25% 40%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.35) 40%, rgba(255, 255, 255, 0.1) 65%, transparent 85%);
+    background-color: transparent;
+    animation: cloudFloat 20s ease-in-out infinite;
+}
+
+@keyframes cloudFloat {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+    50% {
+        transform: translateX(-20px) translateY(10px);
+    }
+}
+
+
+@keyframes fadeInBackground {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Car Animation Elements */
+.car-sprite {
+    position: absolute;
+    bottom: 60px;
+    left: -100px;
+    width: 80px;
+    height: 48px;
+    z-index: 5;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Pixel-style car body */
+.car-sprite::before {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 32px;
+    background: var(--dusty-blue);
+    border: 3px solid var(--text-dark);
+    box-shadow: 
+        inset 2px 2px 0 rgba(255, 255, 255, 0.15),
+        inset -2px -2px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Car windshield */
+.car-sprite::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    width: 56px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid var(--text-dark);
+}
+
+/* Car wheels */
+.car-sprite {
+    background-image: 
+        radial-gradient(circle at 12px 40px, var(--text-dark) 8px, transparent 8px),
+        radial-gradient(circle at 68px 40px, var(--text-dark) 8px, transparent 8px);
+    background-size: 80px 48px;
+    background-repeat: no-repeat;
+}
+
+/* Road line - dashed */
+.road-line {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(
+        to right,
+        var(--dusty-blue) 0px,
+        var(--dusty-blue) 15px,
+        transparent 15px,
+        transparent 30px
+    );
+    opacity: 0;
+    z-index: 4;
+    pointer-events: none;
+}
+
+/* Car banner - slightly smaller */
+.car-banner {
+    position: absolute;
+    bottom: 160px;
+    left: -250px;
+    width: 500px;
+    height: 140px;
+    background: var(--faded-red);
+    border: 4px solid var(--text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 6px 6px 0 var(--shadow-strong);
+}
+
+.car-banner::before {
+    content: '';
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 25px solid var(--faded-red);
+}
+
+.car-banner::after {
+    content: '';
+    position: absolute;
+    top: -29px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 43px solid transparent;
+    border-right: 43px solid transparent;
+    border-bottom: 29px solid var(--text-dark);
+    z-index: -1;
+}
+
+.car-banner-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.8rem;
+    color: white;
+    text-shadow: 3px 3px 0 var(--text-dark);
+    letter-spacing: 2px;
+}
+
+/* Car driving animation - much slower */
+.car-sprite.animating {
+    opacity: 1;
+    animation: driveCar 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.car-banner.animating {
+    opacity: 1;
+    animation: driveCar 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes driveCar {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(100vw + 250px));
+    }
+}
+
+/* Road line animation - slower to match car */
+.road-line.animating {
+    opacity: 0.3;
+    animation: animateRoad 3.5s linear forwards;
+}
+
+@keyframes animateRoad {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 60px 0;
+    }
+}
+
+/* Screen fade out */
+#cover-screen.fading-out {
+    animation: fadeOutScreen 0.5s ease-out forwards;
+}
+
+@keyframes fadeOutScreen {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Disable button during animation */
+.retro-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.cover-content {
+    position: relative;
+    z-index: 10;
+    opacity: 0;
+    animation: fadeInContent 0.4s ease-out 0.6s forwards;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Yearbook Photo Corners - Vintage style */
+.photo-corner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeInCorner 0.6s ease-out 1.2s forwards;
+}
+
+.photo-corner-tl {
+    top: 40px;
+    left: 40px;
+    border-top: 4px solid rgba(255, 255, 255, 0.8);
+    border-left: 4px solid rgba(255, 255, 255, 0.8);
+    border-top-left-radius: 8px;
+}
+
+.photo-corner-tr {
+    top: 40px;
+    right: 40px;
+    border-top: 4px solid rgba(255, 255, 255, 0.8);
+    border-right: 4px solid rgba(255, 255, 255, 0.8);
+    border-top-right-radius: 8px;
+}
+
+.photo-corner-bl {
+    bottom: 40px;
+    left: 40px;
+    border-bottom: 4px solid rgba(255, 255, 255, 0.8);
+    border-left: 4px solid rgba(255, 255, 255, 0.8);
+    border-bottom-left-radius: 8px;
+}
+
+.photo-corner-br {
+    bottom: 40px;
+    right: 40px;
+    border-bottom: 4px solid rgba(255, 255, 255, 0.8);
+    border-right: 4px solid rgba(255, 255, 255, 0.8);
+    border-bottom-right-radius: 8px;
+}
+
+@keyframes fadeInCorner {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Yearbook Ribbon Banner */
+.yearbook-ribbon {
+    position: relative;
+    display: block;
+    margin: 0 auto 1.5rem;
+    padding: 1rem 3rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 3px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: perspective(500px) rotateX(5deg);
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.yearbook-ribbon::before,
+.yearbook-ribbon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 15px solid transparent;
+}
+
+.yearbook-ribbon::before {
+    left: -30px;
+    border-right-color: rgba(255, 255, 255, 0.6);
+    border-left: none;
+}
+
+.yearbook-ribbon::after {
+    right: -30px;
+    border-left-color: rgba(255, 255, 255, 0.6);
+    border-right: none;
+}
+
+/* Yearbook Badge */
+.yearbook-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    border: 3px solid rgba(0, 0, 0, 0.4);
+    border-radius: 25px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.5rem;
+    color: #800020;
+    text-shadow: 
+        1px 1px 0 rgba(255, 255, 255, 0.6),
+        0 0 5px rgba(255, 215, 0, 0.5);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+    z-index: 6;
+    opacity: 0;
+    animation: badgePop 0.5s ease-out 1.5s forwards;
+    transform: rotate(-5deg);
+    letter-spacing: 1px;
+}
+
+@keyframes badgePop {
+    0% {
+        opacity: 0;
+        transform: rotate(-5deg) scale(0);
+    }
+    50% {
+        transform: rotate(-5deg) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(-5deg) scale(1);
+    }
+}
+
+/* Yearbook Stars */
+.yearbook-stars {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeInStars 0.8s ease-out 1.8s forwards;
+}
+
+.yearbook-stars .star {
+    display: inline-block;
+    font-size: 1.5rem;
+    color: rgba(255, 215, 0, 0.7);
+    text-shadow: 
+        0 0 10px rgba(255, 215, 0, 0.5),
+        2px 2px 4px rgba(0, 0, 0, 0.3);
+    margin: 0 0.5rem;
+    animation: starTwinkle 2s ease-in-out infinite;
+}
+
+.yearbook-stars .star:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.yearbook-stars .star:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.yearbook-stars .star:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes fadeInStars {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes starTwinkle {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(180deg);
+    }
+}
+
+/* Yearbook Signature/Quote */
+.yearbook-signature {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(0.7rem, 1.5vw, 1rem);
+    color: #000000;
+    font-style: normal;
+    margin: 1.5rem auto 3rem;
+    text-shadow: 
+        2px 2px 0 rgba(255, 255, 255, 0.5),
+        0 0 10px rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    animation: fadeInSignature 0.6s ease-out 1.4s forwards;
+    position: relative;
+    padding: 0.5rem 1rem;
+    display: block;
+    text-align: center;
+    width: fit-content;
+    line-height: 1.8;
+    max-width: 90%;
+}
+
+.yearbook-signature::before {
+    content: '"';
+    font-size: 2em;
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    color: #000000;
+    font-family: Georgia, serif;
+    opacity: 0.7;
+}
+
+.yearbook-signature::after {
+    content: '"';
+    font-size: 2em;
+    position: absolute;
+    right: -10px;
+    bottom: -20px;
+    color: #000000;
+    font-family: Georgia, serif;
+    opacity: 0.7;
+}
+
+@keyframes fadeInSignature {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInContent {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cover-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    color: #ffffff;
+    margin: 0;
+    text-shadow: 
+        3px 3px 0 rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(255, 255, 255, 0.3);
+    line-height: 1.6;
+    letter-spacing: 3px;
+    position: relative;
+    opacity: 0;
+    animation: fadeInTitle 0.4s ease-out 0.8s forwards;
+    padding: 0;
+}
+
+@keyframes fadeInTitle {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Divider line under title - removed since we have ribbon now */
+.cover-title::after {
+    display: none;
+}
+
+.cover-subtitle {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    color: #000000;
+    margin: 0 auto 2.5rem;
+    text-shadow: 
+        2px 2px 0 rgba(255, 255, 255, 0.3),
+        0 0 10px rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    animation: fadeInTitle 0.4s ease-out 0.8s forwards;
+    text-align: center;
+    width: fit-content;
+}
+
+.cover-subtitle #player-name {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+}
+
+/* Retro Buttons */
+.retro-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(0.7rem, 2vw, 1rem);
+    padding: 1rem 2rem;
+    background: var(--dusty-blue);
+    color: white;
+    border: 3px solid var(--text-dark);
+    box-shadow: 
+        4px 4px 0 var(--shadow-strong),
+        0 0 15px rgba(107, 143, 163, 0.3);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    opacity: 0;
+    margin: 1rem auto 0;
+    display: block;
+    animation: fadeInButton 0.4s ease-out 1s forwards;
+    animation: 
+        fadeInButton 0.4s ease-out 1s forwards,
+        pulseGlow 2s ease-in-out infinite 1.4s;
+}
+
+@keyframes fadeInButton {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 
+            4px 4px 0 var(--shadow-strong),
+            0 0 15px rgba(107, 143, 163, 0.3);
+    }
+    50% {
+        box-shadow: 
+            4px 4px 0 var(--shadow-strong),
+            0 0 25px rgba(107, 143, 163, 0.5);
+    }
+}
+
+/* Blinking caret effect */
+.retro-btn::after {
+    content: ' ▌';
+    animation: blink 1s step-end infinite;
+    opacity: 1;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0;
+    }
+}
+
+.retro-btn:hover {
+    transform: translate(2px, 2px) scale(1.05);
+    box-shadow: 
+        2px 2px 0 var(--shadow-strong),
+        0 0 30px rgba(107, 143, 163, 0.6);
+    background: #5a7a8a;
+}
+
+.retro-btn:active {
+    transform: translate(4px, 4px) scale(1.02);
+    box-shadow: 0 0 0 var(--shadow-strong);
+}
+
+/* Music Toggle */
+.music-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid var(--text-dark);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 100;
+}
+
+.music-toggle:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+}
+
+.music-toggle.muted {
+    opacity: 0.5;
+}
+
+/* Floating Particles */
+.particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(255, 250, 240, 0.4);
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.3;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-100px) translateX(50px);
+        opacity: 0;
+    }
+}
+
+/* Year Selection */
+.page-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--text-dark);
+    text-shadow: 2px 2px 0 var(--shadow);
+}
+
+.year-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.year-card {
+    background: white;
+    border: 3px solid var(--text-dark);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 4px 4px 0 var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.year-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.year-card:hover::before {
+    left: 100%;
+}
+
+.year-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--shadow-strong);
+}
+
+.year-card h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.year-card-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+    color: var(--text-light);
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+/* Pixel Icons for Category Cards */
+.pixel-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1.2rem;
+    position: relative;
+    image-rendering: pixelated;
+}
+
+/* Pixel Star - for The Girls (blue theme) */
+.pixel-star {
+    width: 44px;
+    height: 44px;
+}
+
+.pixel-star::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    background: #1976d2;
+    box-shadow:
+        /* Row 1 */
+        8px 0px 0 #1976d2,
+
+        /* Row 2 */
+        8px 4px 0 #42a5f5,
+
+        /* Row 3 - wide */
+        0px 8px 0 #1976d2,
+        4px 8px 0 #42a5f5,
+        8px 8px 0 #90caf9,
+        12px 8px 0 #42a5f5,
+        16px 8px 0 #1976d2,
+
+        /* Row 4 */
+        4px 12px 0 #1976d2,
+        8px 12px 0 #42a5f5,
+        12px 12px 0 #1976d2,
+
+        /* Row 5 */
+        0px 16px 0 #1976d2,
+        4px 16px 0 #42a5f5,
+        12px 16px 0 #42a5f5,
+        16px 16px 0 #1976d2;
+    transform: scale(2.8);
+    transform-origin: top left;
+}
+
+/* Pixel Lightning Bolt - for The Boys (purple theme) */
+.pixel-lightning {
+    width: 40px;
+    height: 56px;
+}
+
+.pixel-lightning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    background: #9c27b0;
+    box-shadow:
+        /* Row 1 */
+        8px 0px 0 #9c27b0,
+        12px 0px 0 #9c27b0,
+
+        /* Row 2 */
+        4px 4px 0 #ab47bc,
+        8px 4px 0 #ce93d8,
+        12px 4px 0 #9c27b0,
+
+        /* Row 3 */
+        4px 8px 0 #9c27b0,
+        8px 8px 0 #ab47bc,
+
+        /* Row 4 - wide bar */
+        0px 12px 0 #9c27b0,
+        4px 12px 0 #ce93d8,
+        8px 12px 0 #ab47bc,
+        12px 12px 0 #9c27b0,
+
+        /* Row 5 */
+        4px 16px 0 #9c27b0,
+        8px 16px 0 #ab47bc,
+
+        /* Row 6 */
+        0px 20px 0 #9c27b0,
+        4px 20px 0 #ce93d8;
+    transform: scale(2.8);
+    transform-origin: top left;
+}
+
+/* Pixel Crown - for The OGs (green theme) */
+.pixel-crown {
+    width: 56px;
+    height: 44px;
+}
+
+.pixel-crown::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    background: #5b7d52;
+    box-shadow:
+        /* Row 1 - tips */
+        0px 0px 0 #5b7d52,
+        8px 0px 0 #5b7d52,
+        16px 0px 0 #5b7d52,
+
+        /* Row 2 */
+        0px 4px 0 #7a9e74,
+        4px 4px 0 #5b7d52,
+        8px 4px 0 #7a9e74,
+        12px 4px 0 #5b7d52,
+        16px 4px 0 #7a9e74,
+
+        /* Row 3 */
+        0px 8px 0 #5b7d52,
+        4px 8px 0 #a5c4a0,
+        8px 8px 0 #5b7d52,
+        12px 8px 0 #a5c4a0,
+        16px 8px 0 #5b7d52,
+
+        /* Row 4 - base */
+        0px 12px 0 #4a6741,
+        4px 12px 0 #5b7d52,
+        8px 12px 0 #5b7d52,
+        12px 12px 0 #5b7d52,
+        16px 12px 0 #4a6741,
+
+        /* Row 5 - bottom band */
+        0px 16px 0 #3b5e32,
+        4px 16px 0 #4a6741,
+        8px 16px 0 #4a6741,
+        12px 16px 0 #4a6741,
+        16px 16px 0 #3b5e32;
+    transform: scale(2.8);
+    transform-origin: top left;
+}
+
+/* Hover animation for pixel icons */
+.year-card:hover .pixel-icon::before {
+    animation: pixelBounce 0.4s ease-in-out;
+}
+
+@keyframes pixelBounce {
+    0%, 100% {
+        transform: scale(2.8) translateY(0);
+    }
+    50% {
+        transform: scale(2.8) translateY(-4px);
+    }
+}
+
+.constant-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 2rem auto;
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+    padding: 1.2rem 2rem;
+    background: transparent;
+    color: #e91e63;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.constant-btn:hover {
+    transform: scale(1.1);
+    box-shadow: none;
+}
+
+.constant-btn:hover .pixel-heart {
+    animation: heartBeat 0.6s ease-in-out infinite;
+}
+
+/* Pixel Heart */
+.pixel-heart {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    image-rendering: pixelated;
+    /* Pixel heart drawn with box-shadows - each "pixel" is 4px */
+    background: transparent;
+}
+
+.pixel-heart::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    background: #e91e63;
+    box-shadow:
+        /* Row 1: two bumps */
+         4px  0px 0 #e91e63,
+         8px  0px 0 #e91e63,
+        16px  0px 0 #e91e63,
+        20px  0px 0 #e91e63,
+
+        /* Row 2 */
+         0px  4px 0 #e91e63,
+         4px  4px 0 #ff5c8d,
+         8px  4px 0 #ff5c8d,
+        12px  4px 0 #e91e63,
+        16px  4px 0 #ff5c8d,
+        20px  4px 0 #ff5c8d,
+        24px  4px 0 #e91e63,
+
+        /* Row 3 */
+         0px  8px 0 #e91e63,
+         4px  8px 0 #ff5c8d,
+         8px  8px 0 #ffffff,
+        12px  8px 0 #ff5c8d,
+        16px  8px 0 #ff5c8d,
+        20px  8px 0 #ff5c8d,
+        24px  8px 0 #e91e63,
+
+        /* Row 4 */
+         0px 12px 0 #e91e63,
+         4px 12px 0 #ff5c8d,
+         8px 12px 0 #ff5c8d,
+        12px 12px 0 #ff5c8d,
+        16px 12px 0 #ff5c8d,
+        20px 12px 0 #ff5c8d,
+        24px 12px 0 #e91e63,
+
+        /* Row 5 */
+         4px 16px 0 #e91e63,
+         8px 16px 0 #e91e63,
+        12px 16px 0 #ff5c8d,
+        16px 16px 0 #e91e63,
+        20px 16px 0 #e91e63,
+
+        /* Row 6 */
+         8px 20px 0 #e91e63,
+        12px 20px 0 #e91e63,
+        16px 20px 0 #e91e63,
+
+        /* Row 7 - tip */
+        12px 24px 0 #e91e63;
+    
+    transform: scale(3.5);
+    transform-origin: top left;
+}
+
+@keyframes heartBeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.back-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    padding: 0.7rem 1.5rem;
+    background: var(--olive-green);
+    color: white;
+    border: 2px solid var(--text-dark);
+    box-shadow: 3px 3px 0 var(--shadow);
+    cursor: pointer;
+    margin-bottom: 2rem;
+    transition: all 0.1s ease;
+}
+
+.back-btn:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--shadow);
+}
+
+/* Year Page Themed Backgrounds */
+
+/* The Girls - Blue theme */
+#year-page.theme-girls {
+    background: linear-gradient(135deg, #e3f2fd 0%, #90caf9 30%, #42a5f5 70%, #1e88e5 100%);
+}
+
+#year-page.theme-girls .year-header h2 {
+    color: #0d47a1;
+    text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+#year-page.theme-girls .year-intro {
+    color: #1565c0;
+}
+
+#year-page.theme-girls .video-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #1565c0;
+    box-shadow: 4px 4px 0 rgba(13, 71, 161, 0.25);
+}
+
+#year-page.theme-girls .video-card:hover {
+    box-shadow: 6px 6px 0 rgba(13, 71, 161, 0.35);
+}
+
+#year-page.theme-girls .watch-btn {
+    background: #1976d2;
+}
+
+#year-page.theme-girls .watch-btn:hover {
+    background: #1565c0;
+}
+
+#year-page.theme-girls .back-btn {
+    background: #0d47a1;
+}
+
+/* The Boys - Purple theme */
+#year-page.theme-boys {
+    background: linear-gradient(135deg, #f3e5f5 0%, #ce93d8 30%, #ab47bc 70%, #8e24aa 100%);
+}
+
+#year-page.theme-boys .year-header h2 {
+    color: #4a148c;
+    text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+#year-page.theme-boys .year-intro {
+    color: #6a1b9a;
+}
+
+#year-page.theme-boys .video-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #7b1fa2;
+    box-shadow: 4px 4px 0 rgba(74, 20, 140, 0.25);
+}
+
+#year-page.theme-boys .video-card:hover {
+    box-shadow: 6px 6px 0 rgba(74, 20, 140, 0.35);
+}
+
+#year-page.theme-boys .watch-btn {
+    background: #9c27b0;
+}
+
+#year-page.theme-boys .watch-btn:hover {
+    background: #7b1fa2;
+}
+
+#year-page.theme-boys .back-btn {
+    background: #6a1b9a;
+}
+
+/* The OGs - Dark/sage green theme */
+#year-page.theme-ogs {
+    background: linear-gradient(135deg, #e8f0e4 0%, #a5c4a0 30%, #7a9e74 70%, #4a6741 100%);
+}
+
+#year-page.theme-ogs .year-header h2 {
+    color: #2e4a26;
+    text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+#year-page.theme-ogs .year-intro {
+    color: #3b5e32;
+}
+
+#year-page.theme-ogs .video-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #4a6741;
+    box-shadow: 4px 4px 0 rgba(46, 74, 38, 0.25);
+}
+
+#year-page.theme-ogs .video-card:hover {
+    box-shadow: 6px 6px 0 rgba(46, 74, 38, 0.35);
+}
+
+#year-page.theme-ogs .watch-btn {
+    background: #5b7d52;
+}
+
+#year-page.theme-ogs .watch-btn:hover {
+    background: #4a6741;
+}
+
+#year-page.theme-ogs .back-btn {
+    background: #3b5e32;
+}
+
+/* Year Page */
+.year-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.year-header h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 0 var(--shadow);
+}
+
+.year-intro {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto;
+    font-style: italic;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.video-card {
+    background: white;
+    border: 3px solid var(--text-dark);
+    padding: 1.5rem;
+    box-shadow: 4px 4px 0 var(--shadow);
+    transition: all 0.2s ease;
+}
+
+.video-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--shadow-strong);
+}
+
+.video-card h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.video-card p {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.watch-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    padding: 0.7rem 1.5rem;
+    background: var(--dusty-blue);
+    color: white;
+    border: 2px solid var(--text-dark);
+    box-shadow: 3px 3px 0 var(--shadow);
+    cursor: pointer;
+    transition: all 0.1s ease;
+    width: 100%;
+}
+
+.watch-btn:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--shadow);
+}
+
+/* The Constant Page - Pink Theme */
+#constant-page {
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 30%, #f48fb1 70%, #f06292 100%);
+}
+
+.constant-container {
+    max-width: 900px;
+}
+
+.constant-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.constant-header h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: #880e4f;
+    margin-bottom: 1.5rem;
+    text-shadow: 3px 3px 0 rgba(255, 255, 255, 0.5);
+}
+
+.constant-intro {
+    font-size: 1.2rem;
+    line-height: 1.9;
+    color: #ad1457;
+    font-style: italic;
+    margin-bottom: 3rem;
+}
+
+.constant-video-container {
+    margin-bottom: 3rem;
+    background: rgba(255, 255, 255, 0.9);
+    border: 4px solid #c2185b;
+    box-shadow: 6px 6px 0 rgba(136, 14, 79, 0.3);
+    padding: 1rem;
+}
+
+.constant-video-container video,
+.constant-video-container iframe {
+    width: 100%;
+    height: auto;
+    min-height: 500px;
+    display: block;
+}
+
+.constant-video-container iframe {
+    aspect-ratio: 16 / 9;
+}
+
+.constant-letter {
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid #c2185b;
+    padding: 2rem;
+    box-shadow: 4px 4px 0 rgba(136, 14, 79, 0.25);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #880e4f;
+}
+
+#constant-page .back-btn {
+    background: #ad1457;
+}
+
+/* Video Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: var(--paper-beige);
+    border: 4px solid var(--text-dark);
+    box-shadow: 8px 8px 0 var(--shadow-strong);
+    max-width: 90%;
+    max-height: 90vh;
+    padding: 2rem;
+    position: relative;
+    animation: slideUp 0.3s ease;
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--faded-red);
+    color: white;
+    border: 2px solid var(--text-dark);
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
+    box-shadow: 3px 3px 0 var(--shadow);
+}
+
+.modal-close:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--shadow);
+}
+
+.memory-unlocked {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: var(--dusty-blue);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: unlockAnimation 1s ease forwards;
+}
+
+@keyframes unlockAnimation {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#modal-video-container {
+    margin-bottom: 1.5rem;
+}
+
+#modal-video-container video,
+#modal-video-container iframe {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    min-height: 450px;
+    border: 3px solid var(--text-dark);
+    box-shadow: 4px 4px 0 var(--shadow);
+    display: block;
+}
+
+#modal-video-container iframe {
+    aspect-ratio: 16 / 9;
+}
+
+#modal-info {
+    text-align: center;
+}
+
+#modal-info h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+#modal-info p {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+
+/* Achievement */
+.achievement {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+    animation: achievementPop 0.5s ease;
+}
+
+.achievement.hidden {
+    display: none;
+}
+
+@keyframes achievementPop {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.achievement-content {
+    background: white;
+    border: 4px solid var(--text-dark);
+    padding: 2rem 3rem;
+    box-shadow: 8px 8px 0 var(--shadow-strong);
+    text-align: center;
+}
+
+.achievement-content h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.achievement-content p {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1rem;
+    color: var(--faded-red);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .screen {
+        padding: 1rem;
+    }
+
+    .year-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        max-width: 95%;
+    }
+
+    
+    /* Reduce animation intensity on mobile for performance */
+    @keyframes pageFlipIn {
+        0% {
+            transform: rotateY(-90deg);
+            opacity: 0;
+        }
+        100% {
+            transform: rotateY(0deg);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes pageFlipOut {
+        0% {
+            transform: rotateY(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: rotateY(90deg);
+            opacity: 0;
+        }
+    }
+}
+
