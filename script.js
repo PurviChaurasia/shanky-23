@@ -23,7 +23,7 @@ const content = {
                 src: "https://drive.google.com/file/d/1d28btEDSvaHFD4ZlSjS2J-ULKnuTOdoM/view?usp=drive_link"
             },
             {
-                name: "Nawal",
+                name: "Angelia",
                 caption: "The one who never let you feel alone",
                 src: "https://drive.google.com/file/d/1RP1r9vtpqHPPs7BY77r_V3N0ri_wiFif/view?usp=drive_link"
             },
