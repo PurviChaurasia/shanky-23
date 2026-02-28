@@ -24,7 +24,7 @@ const content = {
             },
             {
                 name: "Angelia",
-                caption: "The one who never let you feel alone",
+                caption: "The one you owe 1% too",
                 src: "https://drive.google.com/file/d/1RP1r9vtpqHPPs7BY77r_V3N0ri_wiFif/view?usp=drive_link"
             },
             {
@@ -39,7 +39,7 @@ const content = {
             },
             {
                 name: "Argo",
-                caption: "Honestly bro, your crazy friend which is always needed",
+                caption: "Your ecstactic friend",
                 src: "https://drive.google.com/file/d/16cNCLS5nOcwWBeC-y_JA7kM4cfFe2nbX/view?usp=drive_link"
             }
         ]
@@ -50,7 +50,7 @@ const content = {
         videos: [
             {
                 name: "Jason",
-                caption: "The cool guy who always had your back",
+                caption: "Your midfielder",
                 src: "https://drive.google.com/file/d/1-7q4Z6wYUrh3gqSqK4eBuSBWMI09HhH0/view?usp=drive_link"
             },
             {
@@ -60,12 +60,12 @@ const content = {
             },
             {
                 name: "Yash",
-                caption: "From what I understand, the financially concerned friend who always had your back",
+                caption: "Your friend whose driving gets you a little scared",
                 src: "https://drive.google.com/file/d/16BvhBKE1cg7M3Zune0a0yMDFsdlRkmzK/view?usp=drive_link"
             },
             {
                 name: "Fasih",
-                caption: "The comdien friend who always matches our vibes",
+                caption: "The comedian friend who always matches our vibes",
                 src: "https://drive.google.com/file/d/1gs11sAyhUDABmsOIbejP6GEHuDhwfSZf/view?usp=drive_link"
             },
             {
@@ -106,7 +106,7 @@ const content = {
             },
             {
                 name: "Adesh",
-                caption: "Your first friend and roomie but don't have words for him now",
+                caption: "Your First roommate and First friend",
                 src: "https://drive.google.com/file/d/1FXTMaiNEIUIQCA4GgprCiep2PyBfiGNB/view?usp=drive_link"
             }
         ]
