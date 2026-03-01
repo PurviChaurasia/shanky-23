@@ -23,9 +23,9 @@ const content = {
                 src: "https://drive.google.com/file/d/1d28btEDSvaHFD4ZlSjS2J-ULKnuTOdoM/view?usp=drive_link"
             },
             {
-                name: "Angelia",
-                caption: "The one you owe 1% too",
-                src: "https://drive.google.com/file/d/1RP1r9vtpqHPPs7BY77r_V3N0ri_wiFif/view?usp=drive_link"
+                name: "Nawal",
+                caption: "The one who never let you feel alone",
+                src: "https://drive.google.com/file/d/1daQyFfRsWJHLEKWQ-OAB09zkqyCfcIrg/view?usp=drive_link"
             },
             {
                 name: "Rana",
@@ -39,7 +39,7 @@ const content = {
             },
             {
                 name: "Argo",
-                caption: "Your ecstactic friend",
+                caption: "Honestly bro, your crazy friend which is always needed",
                 src: "https://drive.google.com/file/d/16cNCLS5nOcwWBeC-y_JA7kM4cfFe2nbX/view?usp=drive_link"
             }
         ]
@@ -50,22 +50,22 @@ const content = {
         videos: [
             {
                 name: "Jason",
-                caption: "Your midfielder",
+                caption: "The cool guy who always had your back",
                 src: "https://drive.google.com/file/d/1-7q4Z6wYUrh3gqSqK4eBuSBWMI09HhH0/view?usp=drive_link"
             },
             {
                 name: "Faizan",
                 caption: "Your driver friend for every trip!",
-                src: "https://drive.google.com/file/d/1Im9-n40LW_2fayGrQTh0Ra1f-I14bGFF/view?usp=sharing"
+                src: "https://drive.google.com/file/d/1xnWjmvnRBuFPsq6XwNq5_2YbijPXzrWu/view?usp=drive_link"
             },
             {
                 name: "Yash",
-                caption: "Your friend whose driving gets you a little scared",
+                caption: "From what I understand, the financially concerned friend who always had your back",
                 src: "https://drive.google.com/file/d/16BvhBKE1cg7M3Zune0a0yMDFsdlRkmzK/view?usp=drive_link"
             },
             {
                 name: "Fasih",
-                caption: "The comedian friend who always matches our vibes",
+                caption: "The comdien friend who always matches our vibes",
                 src: "https://drive.google.com/file/d/1gs11sAyhUDABmsOIbejP6GEHuDhwfSZf/view?usp=drive_link"
             },
             {
@@ -106,7 +106,7 @@ const content = {
             },
             {
                 name: "Adesh",
-                caption: "Your First roommate and First friend",
+                caption: "Your first friend and roomie but don't have words for him now",
                 src: "https://drive.google.com/file/d/1FXTMaiNEIUIQCA4GgprCiep2PyBfiGNB/view?usp=drive_link"
             }
         ]
@@ -281,6 +281,14 @@ function setupEventListeners() {
     videoModal.addEventListener('click', (e) => {
         if (e.target === videoModal) {
             closeModal();
+        }
+    });
+    
+    // Password modal close on outside click
+    const passwordModal = document.getElementById('password-modal');
+    passwordModal.addEventListener('click', (e) => {
+        if (e.target === passwordModal) {
+            passwordModal.classList.remove('active');
         }
     });
     
@@ -536,8 +544,7 @@ function showIntroVideo() {
             continueBtn.style.display = 'block';
             continueBtn.onclick = () => {
                 closeModal();
-                renderConstantPage();
-                showScreen('constantPage');
+                showPasswordPrompt();
             };
             modalVideoContainer.appendChild(continueBtn);
         }, 3000); // Show continue button after 3 seconds
@@ -553,8 +560,7 @@ function showIntroVideo() {
         const video = document.getElementById('intro-video');
         video.addEventListener('ended', () => {
             closeModal();
-            renderConstantPage();
-            showScreen('constantPage');
+            showPasswordPrompt();
         });
     }
     
@@ -587,6 +593,60 @@ function closeModal() {
     if (memoryUnlocked) {
         memoryUnlocked.style.display = 'block';
     }
+}
+
+// Password for constant page - CHANGE THIS TO YOUR DESIRED PASSWORD
+const CONSTANT_PASSWORD = "Bittu";
+
+function showPasswordPrompt() {
+    const passwordModal = document.getElementById('password-modal');
+    const passwordInput = document.getElementById('password-input');
+    const passwordSubmit = document.getElementById('password-submit');
+    const passwordError = document.getElementById('password-error');
+    
+    // Reset
+    passwordInput.value = '';
+    passwordError.classList.add('hidden');
+    passwordError.textContent = '';
+    
+    // Show modal
+    passwordModal.classList.add('active');
+    passwordInput.focus();
+    
+    // Handle submit
+    const handleSubmit = () => {
+        const enteredPassword = passwordInput.value.trim();
+        
+        if (enteredPassword === CONSTANT_PASSWORD) {
+            playClickSound();
+            passwordModal.classList.remove('active');
+            passwordInput.value = '';
+            renderConstantPage();
+            showScreen('constantPage');
+        } else {
+            playClickSound();
+            passwordError.textContent = '[ INCORRECT PASSWORD ]';
+            passwordError.classList.remove('hidden');
+            passwordInput.value = '';
+            passwordInput.focus();
+            
+            // Shake animation
+            passwordInput.style.animation = 'shake 0.5s';
+            setTimeout(() => {
+                passwordInput.style.animation = '';
+            }, 500);
+        }
+    };
+    
+    // Submit on button click
+    passwordSubmit.onclick = handleSubmit;
+    
+    // Submit on Enter key
+    passwordInput.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+    };
 }
 
 
