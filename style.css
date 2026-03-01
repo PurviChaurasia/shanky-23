@@ -1536,6 +1536,72 @@ body::before {
     overflow-y: auto;
 }
 
+/* Password Modal */
+.password-modal-content {
+    max-width: 400px;
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.password-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--text-dark);
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 0 var(--shadow);
+}
+
+.password-input {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 3px solid var(--text-dark);
+    background: white;
+    color: var(--text-dark);
+    text-align: center;
+    box-shadow: 4px 4px 0 var(--shadow);
+    transition: all 0.2s ease;
+}
+
+.password-input:focus {
+    outline: none;
+    box-shadow: 2px 2px 0 var(--shadow);
+    transform: translate(2px, 2px);
+    border-color: var(--dusty-blue);
+}
+
+.password-input::placeholder {
+    color: var(--text-light);
+    opacity: 0.6;
+}
+
+.password-error {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    color: var(--faded-red);
+    margin-bottom: 1rem;
+    min-height: 1.5rem;
+    text-shadow: 1px 1px 0 var(--shadow);
+}
+
+.password-error.hidden {
+    display: none;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-10px);
+    }
+    75% {
+        transform: translateX(10px);
+    }
+}
+
 @keyframes slideUp {
     from {
         transform: translateY(50px);
